@@ -1,0 +1,27 @@
+pipeline{
+    agent any
+    options {
+        disableConcurrentBuilds()
+    }
+    stages{
+        stage('execute ansible'){
+            steps {
+                //echo "${NODE_NAME}"
+                //echo "Running ${BUILD_NUMBER} on ${JENKINS_URL}"
+                //sh 'printenv'
+                ansiColor(colorMapName: 'xterm') {
+                ansiblePlaybook( 
+                    become: true, 
+                    colorized: true, 
+                    credentialsId: 'muxnet',
+                    playbook: "${env.workspace}/install_httpd.yml", 
+                    becomeUser: 'root',
+                    disableHostKeyChecking: true, 
+                    inventory: "${env.workspace}/inventory",
+                    vaultCredentialsId: 'secret')
+                sh 'printenv'
+                }
+            }
+        }
+    }
+}
